@@ -1,7 +1,7 @@
 import socket
 
 import AbstractSpeechTranscriber
-
+import rospy
 
 class NetworkTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
     def __init__(self, address, port):
@@ -15,16 +15,16 @@ class NetworkTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
         while True:
             data = self.stream.recv(1024)
             text = data.decode("utf-8", "ignore")
-            print("Received: " + text)
+            rospy.logdebug("Received: " + text)
             if text.startswith("T"):
-                print("Accepted: " + text)
+                rospy.logdebug("Accepted: " + text)
                 return text.split(":")[2]
 
     def transcribe(self, language="de") -> str:
         while True:
             data = self.stream.recv(1024)
             text = data.decode("utf-8", "ignore")
-            print("Received: " + text)
+            rospy.logdebug("Received: " + text)
             if text.startswith("F"):
-                print("Accepted: " + text)
+                rospy.logdebug("Accepted: " + text)
                 return text.split(":")[2]

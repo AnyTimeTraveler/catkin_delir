@@ -17,7 +17,7 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
         mic_list = sr.Microphone.list_microphone_names()
        
         for i in range(len(mic_list)):
-            print(f"{i} : {mic_list[i]}")
+            rospy.logdebug(f"{i} : {mic_list[i]}")
         self.micId = int(input("Wähle deine Mikrofon ID aus: "))
 
     def encodeText(self, language="en-US"):
@@ -32,19 +32,19 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
         # start mic and initialize with background noise equalization
         with sr.Microphone(device_index=self.micId) as source:
             r.adjust_for_ambient_noise(source, duration=1)
-            print("Sag etwas:")
+            rospy.loginfo("Sag etwas:")
             # listen to mic and understand
             audio = r.listen(source)
 
         # use cmu sphinx to analyze audio
         try:
             text = r.recognize_sphinx(audio, language=language)
-            print(f"Du hast gesagt: {text}")
+            rospy.logdebug(f"Du hast gesagt: {text}")
             return text
         except sr.UnknownValueError:
-            print("Entschuldigung, ich konnte deine Eingabe nicht verstehen.")
+            rospy.loginfo("Entschuldigung, ich konnte deine Eingabe nicht verstehen.")
         except sr.RequestError as e:
-            print(f"Entschuldigung, es gab ein Problem bei der Verarbeitung deiner Eingabe: {e}")
+            rospy.logerror(f"Entschuldigung, es gab ein Problem bei der Verarbeitung deiner Eingabe: {e}")
 
     def transcribePartially(self, language="en-US") -> str:
         return self.encodeText(language)

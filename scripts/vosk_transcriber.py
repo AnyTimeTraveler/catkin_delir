@@ -3,6 +3,7 @@ import json
 import vosk
 import pyaudio
 import AbstractSpeechTranscriber
+import rospy
 
 class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
     def recognizeLiveSpeech(self, language = "de"):
@@ -12,7 +13,7 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4000)
         stream.start_stream()
-        print("Sag etwas:")
+        rospy.logdebug("Sag etwas:")
         while True:
             data = stream.read(4000, exception_on_overflow=False)
             if len(data) == 0:
@@ -21,7 +22,7 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
                 textjson = rec.Result()
                 jsonobj = json.loads(textjson)
                 text = jsonobj["text"]
-                print(f"Du hast gesagt: {text}")
+                rospy.logdebug(f"Du hast gesagt: {text}")
                 stream.stop_stream()
                 stream.close()
                 p.terminate()
