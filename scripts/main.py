@@ -10,6 +10,10 @@ import rospy
 from std_msgs.msg import String
 import os
 
+def signalHandler(signal, frame):
+    print('You pressed Ctrl+C!')
+    sys.exit(0)
+
 import AbstractSpeechTranscriber as AbstractSpeechTranscriber
 import pocket_sphinx_transcriber as pst
 import vosk_transcriber as vsk
@@ -116,6 +120,7 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
 
 
 def main():
+    signal.signal(signal.SIGINT, signalHandler)
     publisher = rospy.Publisher('speech_recognition', String, queue_size=1)
     rospy.init_node('deliriumRecognition')
     #transcriber = vsk.VoskTranscriber()
