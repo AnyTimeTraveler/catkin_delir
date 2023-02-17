@@ -8,11 +8,12 @@ import string
 import sys
 import rospy
 from std_msgs.msg import String
-import os
+
 
 def signalHandler(signal, frame):
     print('You pressed Ctrl+C!')
     sys.exit(0)
+
 
 import AbstractSpeechTranscriber as AbstractSpeechTranscriber
 import pocket_sphinx_transcriber as pst
@@ -20,12 +21,12 @@ import vosk_transcriber as vsk
 import network_transcriber as nst
 import spacy_download
 
+
 def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber, specialCharacter: str, publisher):
-   
     # load content from json file -- TODO: Loading content from the file doesn't work in ROS, so here it is a workaround
-    #with open("rainbowwords.json") as json_file:
-        #rainbowwords = list(json.load(json_file)["words"])
-        #json_file.close()
+    # with open("rainbowwords.json") as json_file:
+    # rainbowwords = list(json.load(json_file)["words"])
+    # json_file.close()
     rainbowwordJson = '["Casablanca","Ananasbaum"]'
 
     rainbowwords = list(json.loads(rainbowwordJson))
@@ -51,7 +52,8 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
         recognizedWord = transcriber.transcribePartially().upper()
         if recognizedWord.upper()[0] == specialCharacter.upper():
             rospy.loginfo("SENDE Buchstabe wurde erkannt!")
-            publisher.publish("Buchstabe wurde erkannt!")
+            publisher.publish("zu")
+            publisher.publish("auf")
 
     rospy.loginfo("Buchstabiertest abgeschlossen!")
 
@@ -88,16 +90,16 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
         return difflib.SequenceMatcher(None, stringOne, stringTwo).ratio()
 
     # load content from json file -- TODO: Loading content from the file doesn't work in ROS, so here it is a workaround
-    #questions = {}
-    #with open("ressources/logicquestiontables/questions.json") as json_file:
-     #   questions = json.load(json_file)
-     #   json_file.close()
+    # questions = {}
+    # with open("ressources/logicquestiontables/questions.json") as json_file:
+    #   questions = json.load(json_file)
+    #   json_file.close()
     questionsJson = '{"q1":{"question":"Schwimmt ein Stein auf dem Wasser?","answer":"n"},"q2":{"question":"Gibt es Fische im Meer?","answer":"y"},"q3":{"question":"Wiegt ein Kilo mehr als zwei Kilo?","answer":"n"},"q4":{"question":"Kann man mit einem Hammer einen Nagel in die Wand schlagen?","answer":"y"},"q5":{"question":"Können Enten schwimmen?","answer":"y"},"q6":{"question":"Gibt es Elefanten im Meer?", "answer":"n"},"q7":{"question":"Kann man mit einem Hammer Holz sägen?", "answer":"n"},"q8":{"question":"Kann man in einem Bett schlafen?","answer":"y"} }'
 
     questions = json.loads(questionsJson)
     rospy.loginfo("Es folgen nun die Logikfragen:")
 
-    #initialText = "Kann Holz mit einem Hammer gesägt werden?"
+    # initialText = "Kann Holz mit einem Hammer gesägt werden?"
     initialText = transcriber.transcribe()
     recognizedText = trimSentence(initialText)
 
@@ -115,20 +117,31 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
     rospy.loginfo(
         f"Antwort auf Frage \"{initialText}\" ist mit einer Konfidenz von {questionMiddledConfidences[matchingQuestion]}:\n\"{questions[matchingQuestion]['question']}\" -> {questions[matchingQuestion]['answer']}")
 
-    rospy.loginfo(f"SENDE Antwort: {questions[matchingQuestion]['answer']}")
-    publisher.publish(f"Antwort: {questions[matchingQuestion]['answer']}")
+    if questions[matchingQuestion]['answer'] == 'y':
+        rospy.loginfo(f"SENDE Handgriff")
+        publisher.publish("zu")
+        publisher.publish("auf")
+    else:
+        rospy.loginfo(f"SENDE Nix")
+
+
+
+def waitfor(transcriber, keyword):
+    while keyword.lower() not in transcriber.transcribe().lower():
+        pass
 
 
 def main():
     signal.signal(signal.SIGINT, signalHandler)
-    publisher = rospy.Publisher('speech_recognition', String, queue_size=1)
+    publisher = rospy.Publisher('/Movement_String', String, queue_size=1)
     rospy.init_node('deliriumRecognition')
-    #transcriber = vsk.VoskTranscriber()
+    # transcriber = vsk.VoskTranscriber()
     transcriber = nst.NetworkTranscriber("10.0.0.1", 4444)
+    waitfor(transcriber=transcriber, keyword="buchstabieren")
     spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher)
+    waitfor(transcriber=transcriber, keyword="logikfragen")
     logicQuestions(transcriber=transcriber, publisher=publisher)
 
 
 if __name__ == '__main__':
     main()
-
