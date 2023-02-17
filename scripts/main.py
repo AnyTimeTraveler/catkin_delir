@@ -121,7 +121,7 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
 
 def main():
     signal.signal(signal.SIGINT, signalHandler)
-    publisher = rospy.Publisher('speech_recognition', String, queue_size=1)
+    publisher = rospy.Publisher('speech_recognition', String, queue_size=50)
     rospy.init_node('deliriumRecognition')
     #transcriber = vsk.VoskTranscriber()
     transcriber = nst.NetworkTranscriber("10.0.0.1", 4444)

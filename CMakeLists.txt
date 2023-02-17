@@ -200,7 +200,7 @@ roslaunch_add_file_check(launch)
 #   scripts/speech/pocket_sphinx_transcriber.py
 #   scripts/speech/vosk_transcriber.py
 #   scripts/main.py
-#   delir.launch
+   launch/delir.launch
    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
  )
 
