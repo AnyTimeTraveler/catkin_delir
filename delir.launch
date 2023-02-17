@@ -1,0 +1,4 @@
+<launch>
+  <node name="delir" pkg="delir" type="main.py" output="screen" />
+</launch>
+
