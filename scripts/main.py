@@ -16,7 +16,7 @@ import vosk_transcriber as vsk
 import network_transcriber as nst
 import spacy_download
 
-def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber, specialCharacter: str):
+def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber, specialCharacter: str, publisher):
    
     # load content from json file -- TODO: Loading content from the file doesn't work in ROS, so here it is a workaround
     #with open("rainbowwords.json") as json_file:
@@ -52,7 +52,7 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
     rospy.loginfo("Buchstabiertest abgeschlossen!")
 
 
-def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber):
+def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber, publisher):
     """
     Waits for the input of one question that can be answered with yes or no. Question has to be out of the "questions.json" file.
     :return: none
@@ -83,7 +83,6 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
         stringTwo = trimSentence(stringTwo)
         return difflib.SequenceMatcher(None, stringOne, stringTwo).ratio()
 
-    publisher = rospy.Publisher('/speech_recognition', String, queue_size=1)
     # load content from json file -- TODO: Loading content from the file doesn't work in ROS, so here it is a workaround
     #questions = {}
     #with open("ressources/logicquestiontables/questions.json") as json_file:
@@ -121,8 +120,8 @@ def main():
     rospy.init_node('deliriumRecognition')
     #transcriber = vsk.VoskTranscriber()
     transcriber = nst.NetworkTranscriber("10.0.0.1", 4444)
-    spellingBee(transcriber=transcriber, specialCharacter="a")
-    logicQuestions(transcriber=transcriber)
+    spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher)
+    logicQuestions(transcriber=transcriber, publisher=publisher)
 
 
 if __name__ == '__main__':
