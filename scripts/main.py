@@ -57,7 +57,7 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
     builtword = builtword[:-1]
     rospy.loginfo(f"Du hast das Wort {builtword} ausgewählt.")
 
-    rospy.loginfo(f"Buchstaben Erkennung erfolgt mit dem Buchstaben \"{specialCharacter}\" ...")
+    rospy.loginfo(f"Buchstabenerkennung erfolgt mit dem Buchstaben \"{specialCharacter}\" ...")
 
     if requiredErrorCount > len(rainbowWords[number]):
         requiredErrorCount = len(rainbowWords[number])
