@@ -1,12 +1,16 @@
 import speech_recognition as sr
 import AbstractSpeechTranscriber
-import os
+import LogHandler
+
+from scripts.LOGLEVEL import LOGLEVEL
 
 
 class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
 
-    def __init__(self):
+    def __init__(self, logger: LogHandler):
 
+        self.pathForAudioFiles = None
+        self.logger = logger
         # Create Recognizer-Object with initialized Microphone
 
         # get mic ID
@@ -15,9 +19,9 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
         # mic_id = None
 
         mic_list = sr.Microphone.list_microphone_names()
-       
+
         for i in range(len(mic_list)):
-            rospy.logdebug(f"{i} : {mic_list[i]}")
+            self.logger.log(f"{i} : {mic_list[i]}")
         self.micId = int(input("Wähle deine Mikrofon ID aus: "))
 
     def encodeText(self, language="en-US"):
@@ -32,22 +36,26 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
         # start mic and initialize with background noise equalization
         with sr.Microphone(device_index=self.micId) as source:
             r.adjust_for_ambient_noise(source, duration=1)
-            rospy.loginfo("Sag etwas:")
+            self.logger.log("Sag etwas:")
             # listen to mic and understand
             audio = r.listen(source)
 
         # use cmu sphinx to analyze audio
         try:
             text = r.recognize_sphinx(audio, language=language)
-            rospy.logdebug(f"Du hast gesagt: {text}")
+            self.logger.log(f"Du hast gesagt: {text}", level=LOGLEVEL.DEBUG)
             return text
         except sr.UnknownValueError:
-            rospy.loginfo("Entschuldigung, ich konnte deine Eingabe nicht verstehen.")
+            self.logger.log("Entschuldigung, ich konnte deine Eingabe nicht verstehen.")
         except sr.RequestError as e:
-            rospy.logerror(f"Entschuldigung, es gab ein Problem bei der Verarbeitung deiner Eingabe: {e}")
+            self.logger.log(f"Entschuldigung, es gab ein Problem bei der Verarbeitung deiner Eingabe: {e}",
+                            level=LOGLEVEL.ERROR)
 
     def transcribePartially(self, language="en-US") -> str:
         return self.encodeText(language)
 
     def transcribe(self, language="en-US") -> str:
         return self.encodeText(language)
+
+    def setAudioFile(self, pathForAudioFiles) -> None:
+        self.pathForAudioFiles = pathForAudioFiles
