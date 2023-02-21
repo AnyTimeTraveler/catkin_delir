@@ -7,4 +7,4 @@ class DummyPublisher:
         self.topic = topic
 
     def publish(self, toBePublishedData: str):
-        logging.info(f"DummyPublisher sendet Message \"{self.topic + toBePublishedData}\"")
+        logging.info(f"DummyPublisher sendet Message \"{self.topic} {toBePublishedData}\"")

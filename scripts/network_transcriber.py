@@ -3,7 +3,7 @@ import socket
 import AbstractSpeechTranscriber
 
 from scripts.LogHandler import LogHandler
-from scripts.LOGLEVEL import LOGLEVEL
+import scripts.LOGLEVEL as LOGLEVEL
 
 
 class NetworkTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
