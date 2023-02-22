@@ -53,8 +53,9 @@ def printPlotResults() -> None:
                     detectedQuestion = foundStrings[1]
                     answer = True if foundStrings[2] == "y" else False
 
-                    foundNumber = re.findall(r'\b\d+(\.\d{1,2})?\b', line)
-                    foundNumber = float(foundNumber[0])
+                    foundNumber = re.findall(r'\b(\d+(\.\d{1,2})?|\.\d{1,2})\b', line)
+                    foundNumber.sort(key=len, reverse=True)
+                    foundNumber = float(foundNumber[0][0])
 
                     if foundNumber > 0.75:
                         combinedLogicQuestionResults[i][True] += 1

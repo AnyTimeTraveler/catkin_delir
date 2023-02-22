@@ -34,9 +34,9 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
 
         r.dynamic_energy_threshold = True
         r.dynamic_energy_adjustment_damping = 0.15
-        r.dynamic_energy_adjustment_ratio = 1.5
-        r.pause_threshold = 0.8
-        r.non_speaking_duration = 0.5
+        r.dynamic_energy_ratio = 1.5
+        r.pause_threshold = 0.6
+        r.non_speaking_duration = 0.2
         r.operation_timeout = None
 
         if self.isMicrophoneUsed:
@@ -59,8 +59,7 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
                     duration = len(audio_array) / audio_data.sample_rate
                     freq = 50
                     time = np.arange(0, duration, 1 / audio_data.sample_rate)
-                    amplitude = 0.05
-                    #noise = np.random.normal(0, amplitude, len(audio_array))
+                    amplitude = np.random.uniform(0.05, 0.15)
                     noise = np.sin(2 * np.pi * freq * time) * amplitude
                     combined_audio = audio_array + noise
 

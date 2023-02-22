@@ -18,18 +18,23 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
         self.model = vosk.Model(model_path="voskModels/vosk-model-small-de-0.15", lang=language)
 
 
-    def recognizeLiveSpeech(self, language="de"):
-        rec = vosk.KaldiRecognizer(self.model, 16000)
-
+    def recognizeLiveSpeech(self):
         if not self.isMicrophoneUsed:
             if self.pathForAudioFiles is not None:
                 wf = wave.open(self.pathForAudioFiles, "rb")
+
+                if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+                    self.logger.log("Audio file must be WAV format mono PCM.", LOGLEVEL.ERROR)
+                    exit(1)
+
                 # read audio
 
                 frames = wf.getnframes()
                 rate = wf.getframerate()
                 duration = frames / float(rate)
                 audio = wf.readframes(wf.getnframes())
+
+                rec = vosk.KaldiRecognizer(self.model, rate)
 
                 # convert audio to numpy array
                 audio_data = np.frombuffer(audio, dtype=np.int16)
@@ -38,7 +43,7 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
 
                 freq = 50
                 time = np.linspace(0, duration, len(audio_data))
-                amplitude = 0.05
+                amplitude = np.random.uniform(0.05, 0.15)
                 noise = np.sin(2 * np.pi * freq * time) * amplitude
 
                 # combine audio and noise
@@ -48,12 +53,15 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
                 combined_audio = combined_data.astype(np.int16).tobytes()
 
                 rec.AcceptWaveform(combined_audio)
+
+
                 textjson = rec.FinalResult()
                 jsonobj = json.loads(textjson)
                 text = jsonobj["text"]
                 return text
 
         else:
+            rec = vosk.KaldiRecognizer(self.model, 16000)
             p = pyaudio.PyAudio()
             stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4000)
             stream.start_stream()
@@ -72,11 +80,11 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
                     p.terminate()
                     return text
 
-    def transcribePartially(self, language="de") -> str:
-        return self.recognizeLiveSpeech(language)
+    def transcribePartially(self) -> str:
+        return self.recognizeLiveSpeech()
 
-    def transcribe(self, language="de") -> str:
-        return self.recognizeLiveSpeech(language)
+    def transcribe(self) -> str:
+        return self.recognizeLiveSpeech()
 
     def setAudioFile(self, pathForAudioFiles) -> None:
         self.pathForAudioFiles = pathForAudioFiles

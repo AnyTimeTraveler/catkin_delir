@@ -415,9 +415,9 @@ def main():
 
     # setup executor thread pool
 
-    """
+
     executorPool = []
-    for _ in range(0, 1):
+    for _ in range(0, 10):
         for i in range(len(spellingBeeFolderPaths)):
             executorPool += [threading.Thread(target=spellingBee, args=(
             transcriber, "a", publisher, requiredErrorQuoteForSpellingBee, logger, spellingBeeFolderPaths[i],
@@ -434,24 +434,26 @@ def main():
         thread.start()
 
     for thread in executorPool:
-        thread.join()"""
+        thread.join()
 
     logger.log("Alle Threads abgeschlossen")
 
     # Run CAM ICU Test
+    """
     for i in range(len(spellingBeeFolderPaths)):
         spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher,
                     requiredErrorCount=requiredErrorQuoteForSpellingBee, logger=logger,
                     pathToAudioFileDirectory=spellingBeeFolderPaths[i],
                     saveResultsAsFilename=f"../automatedResults/spellingBeeResults/{spellingBeeFolderNames[i]}",
                     selectedRainbowword=1)
+
     for i in range(len(logicQuestionFolderPaths)):
         logicQuestions(transcriber=transcriber, publisher=publisher,
                        requiredErrorCount=requiredErrorQuoteForLogicQuestions,
                        numberOfQuestions=numberOfLogicQuestions, logger=logger,
                        pathToAudioFileDirectory=logicQuestionFolderPaths[i],
                        saveResultsAsFilename=f"../automatedResults/logicQuestionResults/{logicQuestionFolderNames[i]}")
-
+    """
 
 if __name__ == '__main__':
     main()
