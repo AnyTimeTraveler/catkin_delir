@@ -8,12 +8,14 @@ import scripts.LOGLEVEL as LOGLEVEL
 
 class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
 
-    def __init__(self, logger: LogHandler, isMicrophoneUsed: bool = True, model: str = "de-DE"):
+    def __init__(self, logger: LogHandler, isMicrophoneUsed: bool = True, model: str = "de-DE", noiseMin: float = 0, noiseMax: float = 0):
 
         self.pathForAudioFiles = None
         self.logger = logger
         self.isMicrophoneUsed = isMicrophoneUsed
         self.model = model
+        self.noiseMin = noiseMin
+        self.noiseMax = noiseMax
 
         if self.isMicrophoneUsed:
             # Create Recognizer-Object with initialized Microphone
@@ -59,7 +61,7 @@ class PocketSphinxTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscribe
                     duration = len(audio_array) / audio_data.sample_rate
                     freq = 50
                     time = np.arange(0, duration, 1 / audio_data.sample_rate)
-                    amplitude = np.random.uniform(0.05, 0.15)
+                    amplitude = np.random.uniform(self.noiseMin, self.noiseMax)
                     noise = np.sin(2 * np.pi * freq * time) * amplitude
                     combined_audio = audio_array + noise
 

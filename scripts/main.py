@@ -387,9 +387,9 @@ def main():
         transcriberWantedNumber = int(input("Bitte eine Zahl eingeben: "))
 
     if transcriberWantedNumber == 1:
-        transcriber = pst.PocketSphinxTranscriber(logger=logger, isMicrophoneUsed=False)
+        transcriber = pst.PocketSphinxTranscriber(logger=logger, isMicrophoneUsed=False, noiseMin=0.05, noiseMax=0.15)
     elif transcriberWantedNumber == 2:
-        transcriber = vsk.VoskTranscriber(logger=logger, isMicrophoneUsed=False)
+        transcriber = vsk.VoskTranscriber(logger=logger, isMicrophoneUsed=False, noiseMin=0.05, noiseMax=0.15)
     else:
         transcriber = nst.NetworkTranscriber(address="10.0.0.1", port=4444, logger=logger)
 

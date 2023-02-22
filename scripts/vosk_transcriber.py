@@ -11,11 +11,14 @@ import scripts.LOGLEVEL as LOGLEVEL
 
 
 class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
-    def __init__(self, logger: LogHandler,language = "de", isMicrophoneUsed: bool = True):
+    def __init__(self, logger: LogHandler,language = "de", isMicrophoneUsed: bool = True, noiseMin: float = 0, noiseMax: float = 0):
         self.pathForAudioFiles = None
         self.logger = logger
         self.isMicrophoneUsed = isMicrophoneUsed
         self.model = vosk.Model(model_path="voskModels/vosk-model-small-de-0.15", lang=language)
+        self.noiseMin = noiseMin
+        self.noiseMax = noiseMax
+
 
 
     def recognizeLiveSpeech(self):
@@ -43,7 +46,7 @@ class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
 
                 freq = 50
                 time = np.linspace(0, duration, len(audio_data))
-                amplitude = np.random.uniform(0.05, 0.15)
+                amplitude = np.random.uniform(self.noiseMin, self.noiseMax)
                 noise = np.sin(2 * np.pi * freq * time) * amplitude
 
                 # combine audio and noise
