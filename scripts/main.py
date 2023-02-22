@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import difflib
+import glob
 import json
 import logging
 import math
@@ -153,8 +154,12 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
             transcriber.setAudioFile(pathsToAudioFiles[i])
         recognizedWord = transcriber.transcribePartially().upper()
         isActionManipulated = True if i in errorAnswers else False
-        isCharacterRecognized = True if recognizedWord.upper()[0] == specialCharacter.upper() else False
-        shouldCharacterBeRecognized = True if rainbowWords[number][i].upper() == specialCharacter.upper() else False
+        if recognizedWord == "":
+            isCharacterRecognized = False
+            shouldCharacterBeRecognized = True
+        else:
+            isCharacterRecognized = True if recognizedWord.upper()[0] == specialCharacter.upper() else False
+            shouldCharacterBeRecognized = True if rainbowWords[number][i].upper() == specialCharacter.upper() else False
 
         listOfCorrectlyIdentifiedCharacters += [
             (rainbowWords[number][i].upper(), isCharacterRecognized == shouldCharacterBeRecognized)]
@@ -349,6 +354,31 @@ def main():
         publisher = DummyPublisher.DummyPublisher(topic='/Movement_String')
         logging.basicConfig(level=logging.INFO)
         logger = LogHandler.LogHandler(isRosUsed=isRosUsed)
+        # sanitize output
+        # delete every file in ../automatedResults/logicQuestionResults/*
+        # delete every file in ../automatedResults/spellingBeeResults/*
+        # delete every file in ../automatedResults/tmp/*
+
+        listOfFiles = glob.glob('../automatedResults/logicQuestionResults/*')
+        for filePath in listOfFiles:
+            try:
+                os.remove(filePath)
+            except OSError:
+                pass
+
+        listOfFiles = glob.glob('../automatedResults/spellingBeeResults/*')
+        for filePath in listOfFiles:
+            try:
+                os.remove(filePath)
+            except OSError:
+                pass
+
+        listOfFiles = glob.glob('../automatedResults/tmp/*')
+        for filePath in listOfFiles:
+            try:
+                os.remove(filePath)
+            except OSError:
+                pass
 
     # Setup Transcriber
     transcriberWantedNumber: int = -1
@@ -359,7 +389,7 @@ def main():
     if transcriberWantedNumber == 1:
         transcriber = pst.PocketSphinxTranscriber(logger=logger, isMicrophoneUsed=False)
     elif transcriberWantedNumber == 2:
-        transcriber = vsk.VoskTranscriber(logger=logger)
+        transcriber = vsk.VoskTranscriber(logger=logger, isMicrophoneUsed=False)
     else:
         transcriber = nst.NetworkTranscriber(address="10.0.0.1", port=4444, logger=logger)
 
@@ -385,8 +415,9 @@ def main():
 
     # setup executor thread pool
 
+    """
     executorPool = []
-    for _ in range(0, 10):
+    for _ in range(0, 1):
         for i in range(len(spellingBeeFolderPaths)):
             executorPool += [threading.Thread(target=spellingBee, args=(
             transcriber, "a", publisher, requiredErrorQuoteForSpellingBee, logger, spellingBeeFolderPaths[i],
@@ -403,17 +434,23 @@ def main():
         thread.start()
 
     for thread in executorPool:
-        thread.join()
+        thread.join()"""
 
     logger.log("Alle Threads abgeschlossen")
 
     # Run CAM ICU Test
-    # spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher,
-    #            requiredErrorCount=requiredErrorQuoteForSpellingBee, logger=logger,
-    #            pathToAudioFileDirectory="audio/CutAndPrepared/Spelling", saveResultsAsFilename="../automatedResults/spellingBeeResults/spellingBeeResults/tmp/tmpfile", selectedRainbowword=1)
-    # logicQuestions(transcriber=transcriber, publisher=publisher, requiredErrorCount=requiredErrorQuoteForLogicQuestions,
-    #               numberOfQuestions=numberOfLogicQuestions, logger=logger,
-    #               pathToAudioFileDirectory="audio/CutAndPrepared/Logic", saveResultsAsFilename="../automatedResults/logicQuestionResults/logicQuestionResults/")
+    for i in range(len(spellingBeeFolderPaths)):
+        spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher,
+                    requiredErrorCount=requiredErrorQuoteForSpellingBee, logger=logger,
+                    pathToAudioFileDirectory=spellingBeeFolderPaths[i],
+                    saveResultsAsFilename=f"../automatedResults/spellingBeeResults/{spellingBeeFolderNames[i]}",
+                    selectedRainbowword=1)
+    for i in range(len(logicQuestionFolderPaths)):
+        logicQuestions(transcriber=transcriber, publisher=publisher,
+                       requiredErrorCount=requiredErrorQuoteForLogicQuestions,
+                       numberOfQuestions=numberOfLogicQuestions, logger=logger,
+                       pathToAudioFileDirectory=logicQuestionFolderPaths[i],
+                       saveResultsAsFilename=f"../automatedResults/logicQuestionResults/{logicQuestionFolderNames[i]}")
 
 
 if __name__ == '__main__':

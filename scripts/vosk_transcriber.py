@@ -1,5 +1,7 @@
 import json
+import wave
 
+import numpy as np
 import vosk
 import pyaudio
 import AbstractSpeechTranscriber
@@ -9,31 +11,66 @@ import scripts.LOGLEVEL as LOGLEVEL
 
 
 class VoskTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
-    def __init__(self, logger: LogHandler):
+    def __init__(self, logger: LogHandler,language = "de", isMicrophoneUsed: bool = True):
         self.pathForAudioFiles = None
         self.logger = logger
+        self.isMicrophoneUsed = isMicrophoneUsed
+        self.model = vosk.Model(model_path="voskModels/vosk-model-small-de-0.15", lang=language)
+
 
     def recognizeLiveSpeech(self, language="de"):
-        model = vosk.Model(lang=language)
-        rec = vosk.KaldiRecognizer(model, 16000)
+        rec = vosk.KaldiRecognizer(self.model, 16000)
 
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4000)
-        stream.start_stream()
-        self.logger.log("Sag etwas:", LOGLEVEL.DEBUG)
-        while True:
-            data = stream.read(4000, exception_on_overflow=False)
-            if len(data) == 0:
-                break
-            if rec.AcceptWaveform(data):
-                textjson = rec.Result()
+        if not self.isMicrophoneUsed:
+            if self.pathForAudioFiles is not None:
+                wf = wave.open(self.pathForAudioFiles, "rb")
+                # read audio
+
+                frames = wf.getnframes()
+                rate = wf.getframerate()
+                duration = frames / float(rate)
+                audio = wf.readframes(wf.getnframes())
+
+                # convert audio to numpy array
+                audio_data = np.frombuffer(audio, dtype=np.int16)
+
+                # generate noise
+
+                freq = 50
+                time = np.linspace(0, duration, len(audio_data))
+                amplitude = 0.05
+                noise = np.sin(2 * np.pi * freq * time) * amplitude
+
+                # combine audio and noise
+                combined_data = audio_data + noise
+
+                # convert back to bytes
+                combined_audio = combined_data.astype(np.int16).tobytes()
+
+                rec.AcceptWaveform(combined_audio)
+                textjson = rec.FinalResult()
                 jsonobj = json.loads(textjson)
                 text = jsonobj["text"]
-                self.logger.log(f"Du hast gesagt: {text}", LOGLEVEL.DEBUG)
-                stream.stop_stream()
-                stream.close()
-                p.terminate()
                 return text
+
+        else:
+            p = pyaudio.PyAudio()
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=4000)
+            stream.start_stream()
+            self.logger.log("Sag etwas:", LOGLEVEL.DEBUG)
+            while True:
+                data = stream.read(4000, exception_on_overflow=False)
+                if len(data) == 0:
+                    break
+                if rec.AcceptWaveform(data):
+                    textjson = rec.Result()
+                    jsonobj = json.loads(textjson)
+                    text = jsonobj["text"]
+                    self.logger.log(f"Du hast gesagt: {text}", LOGLEVEL.DEBUG)
+                    stream.stop_stream()
+                    stream.close()
+                    p.terminate()
+                    return text
 
     def transcribePartially(self, language="de") -> str:
         return self.recognizeLiveSpeech(language)
