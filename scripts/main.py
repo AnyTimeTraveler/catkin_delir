@@ -151,6 +151,7 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
     questionsJson = '{"q1":{"question":"Schwimmt ein Stein auf dem Wasser?","answer":"n"},"q2":{"question":"Gibt es Fische im Meer?","answer":"y"},"q3":{"question":"Wiegt ein Kilo mehr als zwei Kilo?","answer":"n"},"q4":{"question":"Kann man mit einem Hammer einen Nagel in die Wand schlagen?","answer":"y"},"q5":{"question":"Können Enten schwimmen?","answer":"y"},"q6":{"question":"Gibt es Elefanten im Meer?", "answer":"n"},"q7":{"question":"Kann man mit einem Hammer Holz sägen?", "answer":"n"},"q8":{"question":"Kann man in einem Bett schlafen?","answer":"y"} }'
 
     questions = json.loads(questionsJson)
+    input("Bitte drücken Sie 'Enter', um mit den Logikfragen fortzuführen!")
     rospy.loginfo("Es folgen nun die Logikfragen:")
 
     if requiredErrorCount > numberOfQuestions:
