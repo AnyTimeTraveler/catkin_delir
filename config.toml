@@ -1,0 +1,15 @@
+# How much data to grab at once.
+# Smaller buffer means less delay, but costs more CPU
+# if filter_noise is active, then this must be set to 960
+#buffer_size = 1152
+#buffer_size = 960
+buffer_size = 1024
+
+# Sample rate of the input signal
+# MUST MATCH AUDIO SENDER WHEN TCP IS USED!
+# MUST MATCH AUDIO FILE WHEN FILE IS USED!
+#input_sample_rate = 48000
+input_sample_rate = 16000
+
+# Output audio as raw packets on this server address
+listen_address = "0.0.0.0:1111"

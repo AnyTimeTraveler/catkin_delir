@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import difflib
+import os
 import json
 import math
 import random
@@ -221,25 +222,27 @@ def main():
     publisher = rospy.Publisher('/Movement_String', String, queue_size=1)
     rospy.init_node('deliriumRecognition')
     # transcriber = vsk.VoskTranscriber()
-    transcriber = nst.NetworkTranscriber("10.0.0.1", 4444)
+    transcriber = nst.NetworkTranscriber(os.getenv("PEER_IP"), 4444)
 
 
     requiredErrorQuoteForSpellingBee = -1
     while requiredErrorQuoteForSpellingBee < 0:
-        requiredErrorQuoteForSpellingBee = input(
-            "Bitte eine gewünschte Anzahl an Fehlern für den Buchstabierteil eingeben: ")
+        requiredErrorQuoteForSpellingBee = int(input(
+            "Bitte eine gewünschte Anzahl an Fehlern für den Buchstabierteil eingeben: "))
 
 
     numberOfLogicQuestions = -1
     while numberOfLogicQuestions < 0:
-        numberOfLogicQuestions = input("Bitte eine gewünschte Anzahl an Logikfragen eingeben: ")
+        numberOfLogicQuestions = int(input("Bitte eine gewünschte Anzahl an Logikfragen eingeben: "))
     requiredErrorQuoteForLogicQuestions = -1
     while requiredErrorQuoteForLogicQuestions < 0 or requiredErrorQuoteForLogicQuestions > numberOfLogicQuestions:
-        requiredErrorQuoteForLogicQuestions = input(
-            "Bitte eine gewünschte Anzahl an Fehlern für den Logikfragenteil eingeben: ")
+        requiredErrorQuoteForLogicQuestions = int(input(
+            "Bitte eine gewünschte Anzahl an Fehlern für den Logikfragenteil eingeben: "))
 
+    input("Enter drücken, um Buchstabieren zu starten")
     spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher,
                 requiredErrorCount=requiredErrorQuoteForSpellingBee)
+    input("Enter drücken, um Logikfragen zu starten")
     logicQuestions(transcriber=transcriber, publisher=publisher, requiredErrorCount=requiredErrorQuoteForLogicQuestions,
                    numberOfQuestions=numberOfLogicQuestions)
 
