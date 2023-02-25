@@ -240,10 +240,8 @@ def main():
         requiredErrorQuoteForLogicQuestions = int(input(
             "Bitte eine gewünschte Anzahl an Fehlern für den Logikfragenteil eingeben: "))
 
-    input("Enter drücken, um Buchstabieren zu starten")
     spellingBee(transcriber=transcriber, specialCharacter="a", publisher=publisher,
                 requiredErrorCount=requiredErrorQuoteForSpellingBee)
-    input("Enter drücken, um Logikfragen zu starten")
     logicQuestions(transcriber=transcriber, publisher=publisher, requiredErrorCount=requiredErrorQuoteForLogicQuestions,
                    numberOfQuestions=numberOfLogicQuestions)
 
