@@ -110,6 +110,7 @@ def printPlotResults() -> None:
     # generate diagram for logicQuestionResults
 
     width = 24
+
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(width, width))
 
 
@@ -127,13 +128,16 @@ def printPlotResults() -> None:
     green = "mediumseagreen"
     red = "indianred"
 
-    ax1.set_title("Buchstabiertest")
-    ax1.set_xlabel("Geschwindigkeit")
-    ax1.set_ylabel("Prozent korrekt identifizierter Buchstaben")
+    ax1.set_title("Buchstabiertest", fontsize=30)
+    ax1.set_xlabel("Geschwindigkeit", fontsize=30)
+    ax1.set_ylabel("Prozent korrekt identifizierter Buchstaben", fontsize=30)
     ax1.bar(xArrangement, spellingBeeTrueRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=green)
     ax1.bar(xArrangement, spellingBeeFalseRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=red, bottom=spellingBeeTrueRelativeValues)
     ax1.grid(axis="y", linestyle="--", alpha=0.5)
-
+    for tick in ax1.get_xticklabels():
+        tick.set_fontsize(30)
+    for tick in ax1.get_yticklabels():
+        tick.set_fontsize(30)
 
     logicQuestionTrueValues = [combinedLogicQuestionResults[0][True], combinedLogicQuestionResults[1][True], combinedLogicQuestionResults[2][True]]
     logicQuestionFalseValues = [combinedLogicQuestionResults[0][False], combinedLogicQuestionResults[1][False], combinedLogicQuestionResults[2][False]]
@@ -143,26 +147,36 @@ def printPlotResults() -> None:
     logicQuestionTrueRelativeValues = [i / j * 100 for i, j in zip(logicQuestionTrueValues, totalLogicValues)]
     logicQuestionFalseRelativeValues = [i / j * 100 for i, j in zip(logicQuestionFalseValues, totalLogicValues)]
 
-    ax2.set_title("Logikfragen")
-    ax2.set_xlabel("Geschwindigkeit")
-    ax2.set_ylabel("Prozent korrekt identifizierter Fragen")
+    ax2.set_title("Logikfragen", fontsize=30)
+    ax2.set_xlabel("Geschwindigkeit", fontsize=30)
+    ax2.set_ylabel("Prozent korrekt identifizierter Fragen", fontsize=30)
     ax2.bar(xArrangement, logicQuestionTrueRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=green)
     ax2.bar(xArrangement, logicQuestionFalseRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=red, bottom=logicQuestionTrueRelativeValues)
     ax2.grid(axis="y", linestyle="--", alpha=0.5)
-
-    ax3.set_title("Buchstabiertest")
-    ax3.set_xlabel("Geschwindigkeit")
-    ax3.set_ylabel("Durchschnittliche Latenzzeit in s")
+    for tick in ax2.get_xticklabels():
+        tick.set_fontsize(30)
+    for tick in ax2.get_yticklabels():
+        tick.set_fontsize(30)
+    ax3.set_title("Buchstabiertest", fontsize=30)
+    ax3.set_xlabel("Geschwindigkeit", fontsize=30)
+    ax3.set_ylabel("Durchschnittliche Latenzzeit in s", fontsize=30)
     ax3.boxplot(combinedSpellingBeeDetectionSpeed, labels=identifierKeywords)
     ax3.grid(axis="y", linestyle="--", alpha=0.5)
-
-    ax4.set_title("Logikfragen")
-    ax4.set_xlabel("Geschwindigkeit")
-    ax4.set_ylabel("Durchschnittliche Latenzzeit in s")
+    for tick in ax3.get_xticklabels():
+        tick.set_fontsize(30)
+    for tick in ax3.get_yticklabels():
+        tick.set_fontsize(30)
+    ax4.set_title("Logikfragen", fontsize=30)
+    ax4.set_xlabel("Geschwindigkeit", fontsize=30)
+    ax4.set_ylabel("Durchschnittliche Latenzzeit in s", fontsize=30)
     ax4.boxplot(combinedLogicQuestionDetectionSpeed, labels=identifierKeywords)
     ax4.grid(axis="y", linestyle="--", alpha=0.5)
-
+    for tick in ax4.get_xticklabels():
+        tick.set_fontsize(30)
+    for tick in ax4.get_yticklabels():
+        tick.set_fontsize(30)
     fig.show()
+    fig.savefig('vosk')
 
 
 if __name__ == "__main__":
