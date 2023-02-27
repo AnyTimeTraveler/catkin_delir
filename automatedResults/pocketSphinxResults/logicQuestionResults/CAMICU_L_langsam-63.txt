@@ -1,0 +1,4 @@
+"gibt es sehr schwer denn mehr acht" "Gibt es Fische im Meer?" '0.47' "y" '1.890625' 
+"hegt eigentlich jedoch mehr als schweiz jedoch" "Wiegt ein Kilo mehr als zwei Kilo?" '0.62' "n" '1.6875' 
+"kann man mit einem haben auch heute schicken" "Kann man in einem Bett schlafen?" '0.67' "y" '1.765625' 
+"keine ich werde in" "Gibt es Fische im Meer?" '0.52' "y" '1.515625' 

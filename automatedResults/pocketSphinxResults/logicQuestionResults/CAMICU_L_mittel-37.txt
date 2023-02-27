@@ -1,0 +1,4 @@
+"steht das feststellen mir auch" "Schwimmt ein Stein auf dem Wasser?" '0.34' "n" '1.640625' 
+"liegt ein kilo mehr als zeigt jedoch" "Wiegt ein Kilo mehr als zwei Kilo?" '0.81' "n" '1.546875' 
+"kann man mit einem haben auch heute zwecken" "Kann man in einem Bett schlafen?" '0.57' "y" '1.609375' 
+"keine an einigen stellen man schon" "Können Enten schwimmen?" '0.45' "y" '1.71875' 

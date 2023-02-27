@@ -1,0 +1,4 @@
+"gibt es werde mir auch" "Gibt es Fische im Meer?" '0.58' "y" '1.96875' 
+"legt eigentlich jedoch mehr als zwei georg" "Wiegt ein Kilo mehr als zwei Kilo?" '0.68' "n" '1.84375' 
+"kann man mit einem heimat heute schweden" "Kann man in einem Bett schlafen?" '0.68' "y" '1.8125' 
+"keine ich werde in" "Gibt es Fische im Meer?" '0.52' "y" '1.625' 

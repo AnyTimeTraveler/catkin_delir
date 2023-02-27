@@ -1,0 +1,4 @@
+"gibt es für schwere er auch" "Gibt es Fische im Meer?" '0.59' "y" '1.671875' 
+"liegt ein kilo mehr als zeit jedoch" "Wiegt ein Kilo mehr als zwei Kilo?" '0.8' "n" '1.515625' 
+"kann man mit einem haben auch heute zwecken" "Kann man in einem Bett schlafen?" '0.57' "y" '1.5625' 
+"keine an einigen stellen meine schon" "Kann man in einem Bett schlafen?" '0.52' "y" '1.65625' 

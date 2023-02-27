@@ -1,0 +1,4 @@
+"gibt s fischer will mehr um gut" "Gibt es Fische im Meer?" '0.55' "y" '2.03125' 
+"mehr sieht ein kilo mehr als zwei kilo" "Wiegt ein Kilo mehr als zwei Kilo?" '0.86' "n" '2.03125' 
+"kann man mit einem armer holz maine" "Kann man mit einem Hammer Holz sägen?" '0.81' "n" '1.96875' 
+"nspc keinen enden schwimmen nspc" "Können Enten schwimmen?" '0.61' "y" '1.828125' 

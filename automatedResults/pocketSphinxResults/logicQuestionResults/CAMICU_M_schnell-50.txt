@@ -1,0 +1,4 @@
+"gibt es für mehr" "Gibt es Fische im Meer?" '0.54' "y" '1.875' 
+"wie ein kilo mir als zwei kilo" "Wiegt ein Kilo mehr als zwei Kilo?" '0.91' "n" '2.109375' 
+"kann man mit einer nachahmer heute stellen" "Kann man mit einem Hammer Holz sägen?" '0.68' "n" '2.015625' 
+"keine entschließungen" "Können Enten schwimmen?" '0.65' "y" '1.78125' 

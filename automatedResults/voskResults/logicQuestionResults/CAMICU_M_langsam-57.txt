@@ -1,0 +1,4 @@
+"gibt es fische im meer" "Gibt es Fische im Meer?" '1.0' "y" '0.53125' 
+"wiegt ein kilo mehr als zwei kilo" "Wiegt ein Kilo mehr als zwei Kilo?" '1.0' "n" '0.625' 
+"kann man mit einem hammer holz sein" "Kann man mit einem Hammer Holz sägen?" '0.96' "n" '0.53125' 
+"keinen enden schwimmen" "Können Enten schwimmen?" '0.72' "y" '0.484375' 

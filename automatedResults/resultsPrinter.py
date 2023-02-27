@@ -15,19 +15,30 @@ def printPlotResults() -> None:
 
     # make diagram of spellingBeeResults
 
+    voskOrPocketSphinx = -1
+    while voskOrPocketSphinx != 0 and voskOrPocketSphinx != 1:
+        voskOrPocketSphinx = int(input("Vosk-Daten (0) oder PocketSphinx-Daten (1) verwenden? : "))
+
+    if voskOrPocketSphinx == 0:
+        pathAddage = "voskResults/"
+    else:
+        pathAddage = "pocketSphinxResults/"
+
+
+
     identifierKeywords: list = ["langsam", "mittel", "schnell"]
 
-    logicQuestionFileNamesComplete: list = os.listdir("logicQuestionResults/")
-    logicQuestionFileNamesSlow: list = ["logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[0] in fileName]
-    logicQuestionFileNamesMedium: list = ["logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[1] in fileName]
-    logicQuestionFileNamesFast: list = ["logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[2] in fileName]
+    logicQuestionFileNamesComplete: list = os.listdir(pathAddage+"logicQuestionResults/")
+    logicQuestionFileNamesSlow: list = [pathAddage+"logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[0] in fileName]
+    logicQuestionFileNamesMedium: list = [pathAddage+"logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[1] in fileName]
+    logicQuestionFileNamesFast: list = [pathAddage+"logicQuestionResults/" + fileName for fileName in logicQuestionFileNamesComplete if identifierKeywords[2] in fileName]
 
     combinedLogicQuestionFileNames: list[list] = [logicQuestionFileNamesSlow, logicQuestionFileNamesMedium, logicQuestionFileNamesFast]
 
-    spellingBeeFileNamesComplete: list = os.listdir("spellingBeeResults/")
-    spellingBeeFileNamesSlow: list = ["spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[0] in fileName]
-    spellingBeeFileNamesMedium: list = ["spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[1] in fileName]
-    spellingBeeFileNamesFast: list = ["spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[2] in fileName]
+    spellingBeeFileNamesComplete: list = os.listdir(pathAddage+"spellingBeeResults/")
+    spellingBeeFileNamesSlow: list = [pathAddage+"spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[0] in fileName]
+    spellingBeeFileNamesMedium: list = [pathAddage+"spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[1] in fileName]
+    spellingBeeFileNamesFast: list = [pathAddage+"spellingBeeResults/" + fileName for fileName in spellingBeeFileNamesComplete if identifierKeywords[2] in fileName]
 
     combinedSpellingBeeFileNames: list[list] = [spellingBeeFileNamesSlow, spellingBeeFileNamesMedium, spellingBeeFileNamesFast]
 
@@ -37,11 +48,25 @@ def printPlotResults() -> None:
 
     combinedLogicQuestionResults: list[dict] = [logicQuestionResultsSlow, logicQuestionResultsMedium, logicQuestionResultsFast]
 
+    logicQuestionDetectionSpeedSlow: list[float] = []
+    logicQuestionDetectionSpeedMedium: list[float] = []
+    logicQuestionDetectionSpeedFast: list[float] = []
+
+    combinedLogicQuestionDetectionSpeed: list[list[float]] = [logicQuestionDetectionSpeedSlow, logicQuestionDetectionSpeedMedium, logicQuestionDetectionSpeedFast]
+
+
     spellingBeeResultsSlow: dict[bool:int] = {True: 0 , False: 0}
     spellingBeeResultsMedium: dict[bool:int] = {True: 0 , False: 0}
     spellingBeeResultsFast: dict[bool:int] = {True: 0 , False: 0}
 
     combinedSpellingBeeResults: list[dict] = [spellingBeeResultsSlow, spellingBeeResultsMedium, spellingBeeResultsFast]
+
+    spellingBeeDetectionSpeedSlow: list[float] = []
+    spellingBeeDetectionSpeedMedium: list[float] = []
+    spellingBeeDetectionSpeedFast: list[float] = []
+
+    combinedSpellingBeeDetectionSpeed: list[list[float]] = [spellingBeeDetectionSpeedSlow, spellingBeeDetectionSpeedMedium, spellingBeeDetectionSpeedFast]
+
 
     for i in range(len(combinedLogicQuestionFileNames)):
         for fileName in combinedLogicQuestionFileNames[i]:
@@ -53,14 +78,16 @@ def printPlotResults() -> None:
                     detectedQuestion = foundStrings[1]
                     answer = True if foundStrings[2] == "y" else False
 
-                    foundNumber = re.findall(r'\b(\d+(\.\d{1,2})?|\.\d{1,2})\b', line)
-                    foundNumber.sort(key=len, reverse=True)
-                    foundNumber = float(foundNumber[0][0])
+                    foundNumber = re.findall(r'\'([^\']*)\'', line)
+                    confidenceFloat = float(foundNumber[0])
+                    latencyFloat = float(foundNumber[1])
 
-                    if foundNumber > 0.75:
+                    if confidenceFloat > 0.75:
                         combinedLogicQuestionResults[i][True] += 1
                     else:
                         combinedLogicQuestionResults[i][False] += 1
+
+                    combinedLogicQuestionDetectionSpeed[i].append(latencyFloat)
 
 
 
@@ -73,14 +100,17 @@ def printPlotResults() -> None:
                         combinedSpellingBeeResults[i][True] += 1
                     else:
                         combinedSpellingBeeResults[i][False] += 1
+                    foundNumber = re.findall(r'\'([^\']*)\'', line)
+                    foundNumber = float(foundNumber[0])
+                    combinedSpellingBeeDetectionSpeed[i].append(foundNumber)
 
 
 
     # Logic Question Results
     # generate diagram for logicQuestionResults
 
-    width = 11
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(width, width / 2))
+    width = 24
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(width, width))
 
 
 
@@ -119,6 +149,18 @@ def printPlotResults() -> None:
     ax2.bar(xArrangement, logicQuestionTrueRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=green)
     ax2.bar(xArrangement, logicQuestionFalseRelativeValues, alpha=0.5, tick_label=identifierKeywords, color=red, bottom=logicQuestionTrueRelativeValues)
     ax2.grid(axis="y", linestyle="--", alpha=0.5)
+
+    ax3.set_title("Buchstabiertest")
+    ax3.set_xlabel("Geschwindigkeit")
+    ax3.set_ylabel("Durchschnittliche Latenzzeit in s")
+    ax3.boxplot(combinedSpellingBeeDetectionSpeed, labels=identifierKeywords)
+    ax3.grid(axis="y", linestyle="--", alpha=0.5)
+
+    ax4.set_title("Logikfragen")
+    ax4.set_xlabel("Geschwindigkeit")
+    ax4.set_ylabel("Durchschnittliche Latenzzeit in s")
+    ax4.boxplot(combinedLogicQuestionDetectionSpeed, labels=identifierKeywords)
+    ax4.grid(axis="y", linestyle="--", alpha=0.5)
 
     fig.show()
 

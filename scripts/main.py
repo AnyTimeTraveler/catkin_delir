@@ -5,6 +5,7 @@ import glob
 import json
 import logging
 import math
+import multiprocessing
 import os
 import random
 import re
@@ -12,6 +13,7 @@ import signal
 import string
 import sys
 import threading
+import time
 
 import AbstractSpeechTranscriber as AbstractSpeechTranscriber
 import pocket_sphinx_transcriber as pst
@@ -26,7 +28,7 @@ isRosUsed: bool = False
 globalSpellingBeeFileCounter: int = 0
 globalLogicQuestionsFileCounter: int = 0
 
-threadingLock = threading.Lock()
+threadingLock = multiprocessing.Lock()
 
 
 def signalHandler(signal, frame):
@@ -68,6 +70,8 @@ def saveTupledListToFile(listToSave: list[()], toBeNamedFilePath: str,
             for element in tuple:
                 if type(element) is str:
                     element = f"\"{element}\""
+                elif type(element) is int or type(element) is float:
+                    element = f'\'{element}\''
                 builtString += str(element) + " "
             file.write(builtString + "\n")
 
@@ -152,6 +156,9 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
     for i in range(len(rainbowWords[number])):
         if len(pathsToAudioFiles) > 0:
             transcriber.setAudioFile(pathsToAudioFiles[i])
+
+        timerStart = time.process_time()
+
         recognizedWord = transcriber.transcribePartially().upper()
         isActionManipulated = True if i in errorAnswers else False
         if recognizedWord == "":
@@ -161,8 +168,11 @@ def spellingBee(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscriber
             isCharacterRecognized = True if recognizedWord.upper()[0] == specialCharacter.upper() else False
             shouldCharacterBeRecognized = True if rainbowWords[number][i].upper() == specialCharacter.upper() else False
 
+        timerEnd = time.process_time()
+
         listOfCorrectlyIdentifiedCharacters += [
-            (rainbowWords[number][i].upper(), isCharacterRecognized == shouldCharacterBeRecognized)]
+            (rainbowWords[number][i].upper(), isCharacterRecognized == shouldCharacterBeRecognized,
+             timerEnd - timerStart)]
 
         if isCharacterRecognized:
             logger.log(f"Der Buchstabe \"{specialCharacter}\" wurde erkannt!")
@@ -279,6 +289,8 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
         if len(pathToAudioFileDirectory) > 0:
             transcriber.setAudioFile(pathsToAudioFiles[i])
 
+        timerStart = time.process_time()
+
         initialText = transcriber.transcribe()
         recognizedText = trimSentence(initialText)
 
@@ -295,11 +307,14 @@ def logicQuestions(transcriber: AbstractSpeechTranscriber.AbstractSpeechTranscri
                 questionConfidences[question])
         matchingQuestion = max(questionMiddledConfidences, key=questionMiddledConfidences.get)
         roundedConfidence = round(questionMiddledConfidences[matchingQuestion], 2)
+
+        timerEnd = time.process_time()
+
         logger.log(
             f"Antwort auf Frage \"{initialText}\" ist mit einer Konfidenz von {roundedConfidence}:\n\"{questions[matchingQuestion]['question']}\" -> {questions[matchingQuestion]['answer']}")
 
         listOfCorrectlyIdentifiedQuestions += [(initialText, questions[matchingQuestion]['question'], roundedConfidence,
-                                                questions[matchingQuestion]['answer'])]
+                                                questions[matchingQuestion]['answer'], timerEnd - timerStart)]
 
         if questions[matchingQuestion]['answer'] == 'y':
             logger.log("Antwort ist JA")
@@ -413,9 +428,11 @@ def main():
     logicQuestionFolderNames = os.listdir("../audio/CutAndPrepared/Logic")
     logicQuestionFolderPaths = ["../audio/CutAndPrepared/Logic/" + x for x in logicQuestionFolderNames]
 
+
+
     # setup executor thread pool
-
-
+    globalStartTime = time.time()
+    #"""
     executorPool = []
     for _ in range(0, 10):
         for i in range(len(spellingBeeFolderPaths)):
@@ -432,12 +449,13 @@ def main():
 
     for thread in executorPool:
         thread.start()
-
-    for thread in executorPool:
         thread.join()
 
-    logger.log("Alle Threads abgeschlossen")
+    #for thread in executorPool:
+    #    thread.join()
 
+    logger.log("Alle Threads abgeschlossen")
+    #"""
     # Run CAM ICU Test
     """
     for i in range(len(spellingBeeFolderPaths)):
@@ -446,6 +464,7 @@ def main():
                     pathToAudioFileDirectory=spellingBeeFolderPaths[i],
                     saveResultsAsFilename=f"../automatedResults/spellingBeeResults/{spellingBeeFolderNames[i]}",
                     selectedRainbowword=1)
+        break
 
     for i in range(len(logicQuestionFolderPaths)):
         logicQuestions(transcriber=transcriber, publisher=publisher,
@@ -453,7 +472,13 @@ def main():
                        numberOfQuestions=numberOfLogicQuestions, logger=logger,
                        pathToAudioFileDirectory=logicQuestionFolderPaths[i],
                        saveResultsAsFilename=f"../automatedResults/logicQuestionResults/{logicQuestionFolderNames[i]}")
+        break
     """
+
+    globalEndTime = time.time()
+
+    print(f"Total time: {globalEndTime - globalStartTime}")
+
 
 if __name__ == '__main__':
     main()

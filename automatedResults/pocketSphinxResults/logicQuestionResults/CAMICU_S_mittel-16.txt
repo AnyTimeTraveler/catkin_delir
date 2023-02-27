@@ -1,0 +1,4 @@
+"gibt es welche mehr" "Gibt es Fische im Meer?" '0.58' "y" '1.9375' 
+"mit einem kilo mehr als zwei kilometer" "Wiegt ein Kilo mehr als zwei Kilo?" '0.8' "n" '2.25' 
+"kann man mit einem armer holz derselben" "Kann man mit einem Hammer Holz sägen?" '0.78' "n" '2.140625' 
+"keine mit den mitteln für nun gut" "Kann man mit einem Hammer Holz sägen?" '0.39' "n" '2.015625' 

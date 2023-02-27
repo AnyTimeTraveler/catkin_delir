@@ -1,0 +1,4 @@
+"gibt es sehr schwer denn mehr acht" "Gibt es Fische im Meer?" '0.47' "y" '1.8125' 
+"hegt eigentlich jedoch mehr als zwei georg" "Wiegt ein Kilo mehr als zwei Kilo?" '0.68' "n" '1.734375' 
+"" "Schwimmt ein Stein auf dem Wasser?" '0.0' "n" '1.046875' 
+"keine ich handelt" "Wiegt ein Kilo mehr als zwei Kilo?" '0.4' "n" '1.5' 

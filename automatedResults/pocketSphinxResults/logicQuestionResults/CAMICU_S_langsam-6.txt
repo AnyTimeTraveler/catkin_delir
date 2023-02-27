@@ -1,0 +1,4 @@
+"medina es feste nunmehr" "Gibt es Fische im Meer?" '0.52' "y" '1.96875' 
+"gute nicht weil sie nun mehr als zwei empfehlungen" "Wiegt ein Kilo mehr als zwei Kilo?" '0.52' "n" '2.25' 
+"karl hermann mit einem armer rolle ist sehr gering" "Kann man mit einem Hammer Holz sägen?" '0.55' "n" '2.359375' 
+"karl hinter schönen" "Können Enten schwimmen?" '0.43' "y" '2.109375' 

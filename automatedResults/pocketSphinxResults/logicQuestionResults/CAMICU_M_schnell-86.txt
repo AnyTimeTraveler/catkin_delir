@@ -1,0 +1,4 @@
+"gibt es für mehr" "Gibt es Fische im Meer?" '0.54' "y" '1.875' 
+"wie ein kilo mir als zwei kilo" "Wiegt ein Kilo mehr als zwei Kilo?" '0.91' "n" '2.109375' 
+"kann man mit einem haben auch heute stellen" "Kann man in einem Bett schlafen?" '0.57' "y" '2.015625' 
+"keine entschließungen" "Können Enten schwimmen?" '0.65' "y" '1.765625' 

@@ -1,0 +1,4 @@
+"gilt es fische mehr" "Gibt es Fische im Meer?" '0.78' "y" '1.890625' 
+"wie sieht einen viel lob mehr als zwei pilot" "Wiegt ein Kilo mehr als zwei Kilo?" '0.82' "n" '1.96875' 
+"kann man mit einem haben macht treue selten" "Kann man in einem Bett schlafen?" '0.58' "y" '2.078125' 
+"keinen renten schnitzel machen" "Können Enten schwimmen?" '0.58' "y" '1.875' 
