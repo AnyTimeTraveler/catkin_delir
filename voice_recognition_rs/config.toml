@@ -1,0 +1,77 @@
+# Where does the audio come from?
+[audio_source]
+# mode: options = ["DIRECT", "FILE", "TCP"]
+# DIRECT: Use pulseaudio sink on local device for microphone audio
+#mode = "DIRECT"
+# FILE: Use a FILE to read audio data from
+#mode = "FILE"
+# TCP: Use TCP network stream for audio data
+mode = "TCP"
+
+# Address to connect to for TCP audio stream
+address = "10.3.14.101:1111"
+
+# Path of the test audio
+# Remember that sample rates must be a multiple of the model samplerates
+#file = "../../audio/CAMICU_M_schnell.mp3"
+file = "../../audio/CAMICU_M_mittel.mp3"
+#file = "../../audio/CAMICU_M_langsam.mp3"
+
+# How much data to grab at once.
+# Smaller buffer means less delay, but costs more CPU
+# if filter_noise is active, then this must be set to 960
+#buffer_size = 1152
+#buffer_size = 960
+buffer_size = 1024
+
+# Sample rate of the input signal
+# MUST MATCH AUDIO SENDER WHEN TCP IS USED!
+# MUST MATCH AUDIO FILE WHEN FILE IS USED!
+#input_sample_rate = 48000
+input_sample_rate = 16000
+
+# Output the input audio back into Pulseaudio for testing
+listen_to_input = true
+
+# Filter noises out of the input signal, but adds delay
+filter_noise = false
+
+
+
+
+# What to do with the output?
+[output]
+# Output recognized speech as raw text on this server address
+listen_address = "0.0.0.0:4444"
+
+
+
+
+# Settings for speech recognition engine Vosk
+[vosk]
+enabled = true
+# Sample rate that this model expects
+# Must be a divisible or equal to the input sample rate!
+sample_rate = 16000
+
+# Model path of the vosk model that should be used
+#model_path = "../../models/vosk-model-de-0.21"
+#model_path = "../../models/vosk-model-de-tuda-0.6-900k"
+model_path = "../../models/vosk-model-small-de-0.15"
+#model_path = "../../models/vosk-model-small-de-zamia-0.3"
+
+
+
+
+# Settings for speech recognition engine PocketSphinx
+[pocketsphinx]
+enabled = false
+
+# Sample rate that this model expects
+# Must be a divisible or equal to the input sample rate!
+sample_rate = 16000
+
+# Model paths of the cmusphinx model that should be used
+hmm_path = "../../models/cmusphinx-cont-voxforge-de-r20171217/model_parameters/voxforge.cd_cont_6000"
+lm_path = "../../models/cmusphinx-voxforge-de.lm"
+dict_path = "../../models/cmusphinx-voxforge-de.dic"

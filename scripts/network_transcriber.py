@@ -25,8 +25,8 @@ class NetworkTranscriber(AbstractSpeechTranscriber.AbstractSpeechTranscriber):
         self.partial = None
         self.final = None
         self.running = True
-        t = threading.Thread(target=loop, args=(self,address,port,))
-        t.setDaemon(True)
+        t = threading.Thread(target=loop, args=(self, address, port,))
+        t.daemon = True
         t.start()
 
     def transcribePartially(self, language="de") -> str:
